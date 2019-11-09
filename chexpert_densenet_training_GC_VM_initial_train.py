@@ -205,7 +205,8 @@ data['train'] = XrayDataset(train, transform=transform_train)
 data['valid'] = XrayDataset_test(valid, transform=transform_train)
 data['test'] = XrayDataset_test(df_valid, transform=transform_valid)
 
-dataloaders_dict = {x: torch.utils.data.DataLoader(data[x], batch_size=batch_size, shuffle=False, num_workers=4) for x in ['train', 'valid', 'test']}
+dataloaders_dict = {x: torch.utils.data.DataLoader(data[x], batch_size=batch_size, shuffle=False, num_workers=4)
+                    for x in ['train', 'valid', 'test']}
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_ft = model_ft.to(device)
@@ -291,12 +292,12 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs=25, is_ince
                         optimizer.step()
                 if batch_idx % 10 == 0:
                     history[phase][epoch].append({'Loss' : loss.data.cpu()})
-                    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(epoch,
-                                                                                   batch_idx * len(data),
-                                                                                   len(dataloaders[phase].dataset),
-                                                                                   100. * batch_idx / len(
-                                                                                       dataloaders[phase]),
-                                                                                   loss.data))
+                    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'
+                          .format(epoch,
+                                  batch_idx * len(data),
+                                  len(dataloaders[phase].dataset),
+                                  100. * batch_idx / len(dataloaders[phase]),
+                                  loss.data))
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
@@ -335,7 +336,8 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs=25, is_ince
 criterion = torch.nn.BCEWithLogitsLoss(pos_weight=weights.float().to(device))
 
 
-model_ft, hist = train_model(model_ft, dataloaders_dict, criterion, optimizer_ft, num_epochs=num_epochs, is_inception=(model_name=="inception"))
+model_ft, hist = train_model(model_ft, dataloaders_dict, criterion, optimizer_ft, num_epochs=num_epochs,
+                             is_inception=(model_name=="inception"))
 f = open('history.txt', 'w')
 f.write(repr(hist))
 f.close()
